@@ -1,0 +1,99 @@
+openapi: 3.1.0
+info:
+  title: Lockwood Chat Server
+  version: 0.1.0
+  description: HTTP health endpoint and JSON protocol used over the WebSocket connection.
+servers:
+  - url: http://localhost:8080
+paths:
+  /healthz:
+    get:
+      operationId: healthcheck
+      responses:
+        '200':
+          description: Service is healthy.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: ok
+  /ws:
+    get:
+      summary: WebSocket chat endpoint
+      description: Upgrade this request to a WebSocket connection, then exchange JSON messages.
+      responses:
+        '101':
+          description: Switching Protocols.
+      x-websocket-messages:
+        clientToServer:
+          - $ref: '#/components/schemas/AuthRequest'
+          - $ref: '#/components/schemas/CreateAndJoinRoomRequest'
+          - $ref: '#/components/schemas/JoinRoomRequest'
+          - $ref: '#/components/schemas/LeaveRoomRequest'
+          - $ref: '#/components/schemas/ChatRequest'
+        serverToClient:
+          responses:
+            - $ref: '#/components/schemas/CommandResponse'
+          events:
+            - $ref: '#/components/schemas/RoomEvent'
+components:
+  schemas:
+    RequestID:
+      description: Opaque client-provided request correlation identifier.
+      oneOf:
+        - type: string
+        - type: integer
+    AuthRequest:
+      type: object
+      required: [rID, cmd, user]
+      properties:
+        rID: { $ref: '#/components/schemas/RequestID' }
+        cmd: { const: auth }
+        user: { type: string, minLength: 1, maxLength: 128 }
+    CreateAndJoinRoomRequest:
+      type: object
+      required: [rID, cmd, name]
+      properties:
+        rID: { $ref: '#/components/schemas/RequestID' }
+        cmd: { const: create_and_join_room }
+        name: { type: string, minLength: 1, maxLength: 128 }
+    JoinRoomRequest:
+      type: object
+      required: [rID, cmd, name]
+      properties:
+        rID: { $ref: '#/components/schemas/RequestID' }
+        cmd: { const: join_room }
+        name: { type: string, minLength: 1, maxLength: 128 }
+    LeaveRoomRequest:
+      type: object
+      required: [rID, cmd]
+      properties:
+        rID: { $ref: '#/components/schemas/RequestID' }
+        cmd: { const: leave_room }
+        # The server uses the authenticated user's current room, so name is redundant.
+        name: { type: string, minLength: 1, maxLength: 128 }
+    ChatRequest:
+      type: object
+      required: [rID, cmd, message]
+      properties:
+        rID: { $ref: '#/components/schemas/RequestID' }
+        cmd: { const: chat }
+        message: { type: string, minLength: 1, maxLength: 4096 }
+    CommandResponse:
+      type: object
+      required: [rID, cmd, status]
+      properties:
+        rID: { $ref: '#/components/schemas/RequestID' }
+        cmd: { type: string }
+        status:
+          type: string
+          enum: [ok, room_full, room_not_found, room_exists, unauthorized, invalid_request, bad_request, not_in_room, internal_error]
+    RoomEvent:
+      type: object
+      required: [cmd, user]
+      properties:
+        cmd:
+          type: string
+          enum: [user_joined, user_left, chat]
+        user: { type: string }
+        message: { type: string }
