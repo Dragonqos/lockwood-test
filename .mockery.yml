@@ -1,0 +1,14 @@
+dir: "{{.InterfaceDir}}/testing"
+filename: "generated__{{.InterfaceName}}_mocks.go"
+
+packages:
+  github.com/Dragonqos/lockwood-test/internal/resources/auth/domain:
+    interfaces:
+      SessionRepository:
+
+  github.com/Dragonqos/lockwood-test/internal/resources/chat/app:
+    interfaces:
+      ChatCoreAPI:
+  github.com/Dragonqos/lockwood-test/internal/resources/chat/domain:
+    interfaces:
+      Repository:
