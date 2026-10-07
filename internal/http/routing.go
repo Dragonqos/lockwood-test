@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/Dragonqos/lockwood-test/internal/http/openapi"
+	uiapp "github.com/Dragonqos/lockwood-test/ui"
 	"github.com/gorilla/mux"
 )
 
@@ -17,6 +18,7 @@ func NewRouter(deps RouterDependencies) *mux.Router {
 	router.HandleFunc("/healthz", healthz).Methods(http.MethodGet).Name("healthz")
 
 	openapi.HandlerFromMux(deps.Handlers, router)
+	router.PathPrefix("/").Handler(uiapp.Handler())
 	return router
 }
 

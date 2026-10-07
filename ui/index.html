@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lockwood Chat</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div>
+        <p class="eyebrow">Lockwood</p>
+        <h1>WebSocket Chat</h1>
+      </div>
+      <span id="connectionState" class="state offline">Offline</span>
+    </header>
+
+    <section class="card connection-card">
+      <form id="authForm" class="inline-form">
+        <label>
+          User name
+          <input id="user" name="user" required maxlength="128" placeholder="alice">
+        </label>
+        <button id="connectButton" type="submit">Connect</button>
+      </form>
+    </section>
+
+    <section class="grid">
+      <div class="card">
+        <h2>Room</h2>
+        <form id="roomForm" class="stack-form">
+          <label>
+            Room name
+            <input id="room" name="room" required maxlength="128" placeholder="general">
+          </label>
+          <div class="button-row">
+            <button type="button" data-command="create_and_join_room">Create & join</button>
+            <button type="button" class="secondary" data-command="join_room">Join</button>
+          </div>
+        </form>
+        <button id="leaveButton" class="danger" type="button">Leave room</button>
+      </div>
+
+      <div class="card chat-card">
+        <h2>Messages</h2>
+        <div id="messages" class="messages" aria-live="polite"></div>
+        <form id="chatForm" class="chat-form">
+          <input id="message" name="message" required maxlength="4096" placeholder="Write a message..." autocomplete="off">
+          <button type="submit">Send</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="card log-card">
+      <div class="log-heading">
+        <h2>Connection log</h2>
+        <button id="clearLogButton" class="link-button" type="button">Clear</button>
+      </div>
+      <pre id="log" class="log"></pre>
+    </section>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>

@@ -9,8 +9,11 @@ cp .env.example .env
 make run
 ```
 
+Open [http://localhost:8080/](http://localhost:8080/) in a browser to use the chat UI.
+
 The server exposes:
 
+- `GET /` — simple WebSocket chat UI
 - `GET /healthz` — health check
 - `GET /ws` — WebSocket chat endpoint
 
